@@ -1,0 +1,208 @@
+I want you to fix the existing student auto-detection logic in my current project.
+
+IMPORTANT:
+Do NOT redesign the website.
+Do NOT change the premium UI.
+Do NOT remove any existing features.
+Do NOT add a second auto-detection system.
+
+Keep the current user flow:
+
+Enrollment Number
+→ Student Found
+→ Automatically detect Branch
+→ Automatically detect Semester
+→ Automatically detect CP1/CP2/CP3
+→ Load the correct timetable
+→ Find Current Lecture
+→ Find Next Lecture
+
+==================================================
+THE PROBLEM TO FIX
+==================================================
+
+Currently, the student's CP1/CP2/CP3 group is being determined based on the student's position/index in the student array.
+
+For example, the code effectively works like:
+
+first students → CP1
+next students → CP2
+remaining students → CP3
+
+THIS MUST BE REMOVED.
+
+A student's group must NOT depend on their position in an array.
+
+==================================================
+CORRECT SOLUTION
+==================================================
+
+Every student must have their actual group explicitly stored in their student record.
+
+For example:
+
+{
+  enrollmentNumber: "CE45",
+  branchId: "computer-engineering",
+  semester: 1,
+  division: "CP2"
+}
+
+The exact field name can be chosen appropriately, but the group must be explicitly stored.
+
+Then the lookup should work like:
+
+CE45
+↓
+find student record
+↓
+read student's branchId
+↓
+read student's semester
+↓
+read student's division/batch
+↓
+load matching timetable
+
+==================================================
+USE THE ACTUAL PROVIDED DATA
+==================================================
+
+Use the enrollment-number-to-CP1/CP2/CP3 mapping from the student data I provided.
+
+DO NOT:
+- invent students
+- invent enrollment numbers
+- randomly redistribute students
+- determine groups using array position
+- assume equal numbers of students in each group
+
+The actual student mapping is the source of truth.
+
+If the source data contains:
+
+CE45 → CP2
+
+then the application must always return CP2 for CE45, regardless of where CE45 appears in the array.
+
+==================================================
+BRANCH AND SEMESTER
+==================================================
+
+Keep branch and semester as explicit student properties as well.
+
+For the current provided dataset:
+
+Computer Engineering
+Semester 1
+
+should be represented explicitly.
+
+But do NOT hard-code every future student as Computer Engineering Semester 1.
+
+The data model must support:
+
+student
+→ branch
+→ semester
+→ division/batch
+
+This is necessary because the website will eventually support ALL branches and ALL semesters.
+
+==================================================
+TIMETABLE LOOKUP
+==================================================
+
+After finding the student, the timetable must be selected using:
+
+branchId
++
+semester
++
+division/batch
+
+Then use:
+
+day
++
+current time
+
+to determine the current lecture.
+
+The next lecture must use the same student-specific branch/semester/division context.
+
+Do NOT load a timetable only by subject or day.
+
+==================================================
+IMPORTANT
+==================================================
+
+Do not change the existing premium UI.
+
+Keep:
+
+- landing page
+- splash screen
+- enrollment search
+- current lecture card
+- next lecture card
+- weekly timetable
+- animations
+- branding
+- responsive design
+- navigation
+
+Only modify the underlying data model and lookup logic necessary to fix the auto-detection.
+
+==================================================
+TEST THE FIX
+==================================================
+
+After making the changes, test at least:
+
+1. One real CP1 enrollment number
+2. One real CP2 enrollment number
+3. One real CP3 enrollment number
+4. Invalid enrollment number
+
+For each valid enrollment verify:
+
+Enrollment
+→ Correct student
+→ Correct branch
+→ Correct semester
+→ Correct CP group
+→ Correct timetable
+→ Correct current lecture
+→ Correct next lecture
+
+IMPORTANT:
+
+The CP group must come from the student's stored data, NOT from the student's array position.
+
+Also verify that changing the order of the student array would NOT change a student's CP group.
+
+==================================================
+FINAL REQUIREMENT
+==================================================
+
+Do not just modify the code and assume it works.
+
+Actually verify the complete flow:
+
+Enrollment Number
+→ Student Lookup
+→ Branch
+→ Semester
+→ CP Group
+→ Timetable
+→ Current Lecture
+→ Next Lecture
+
+When finished, tell me:
+
+1. Which files you changed
+2. What was wrong with the old CP detection
+3. How the new detection works
+4. Which CP1/CP2/CP3 students you tested
+5. Whether the premium UI was left unchanged

@@ -26,11 +26,12 @@ import {
   findNextLecture,
   findStudent,
   formatTime,
+  getTimetableForStudent,
   getDayKey,
   minutesFromTime,
-  timetable,
   type DayKey,
   type Lecture,
+  type TimetableDataset,
 } from '@/data/classData';
 
 type Screen = 'home' | 'class' | 'timetable';
@@ -83,8 +84,9 @@ function App() {
   const [reminderSet, setReminderSet] = useState(false);
 
   const branch = student ? branchForStudent(student) : undefined;
-  const currentLecture = student ? findLiveLecture(now, student.division) : undefined;
-  const upcoming = student ? findNextLecture(now, student.division) : undefined;
+  const classTimetable = student ? getTimetableForStudent(student) : undefined;
+  const currentLecture = student ? findLiveLecture(now, student) : undefined;
+  const upcoming = student ? findNextLecture(now, student) : undefined;
   const rememberedEnrollment = typeof window !== 'undefined'
     ? window.localStorage.getItem(LAST_STUDENT_KEY)
     : null;
@@ -112,8 +114,8 @@ function App() {
   }, [student, now]);
 
   const selectedLectures = useMemo(
-    () => timetable.lectures.filter((lecture) => lecture.day === selectedDay),
-    [selectedDay],
+    () => classTimetable?.lectures.filter((lecture) => lecture.day === selectedDay) ?? [],
+    [classTimetable, selectedDay],
   );
 
   function performSearch(value = enrollment) {
@@ -259,6 +261,7 @@ function App() {
         <Dashboard
           student={student}
           branchName={branch?.name ?? 'Branch unavailable'}
+          classTimetable={classTimetable}
           currentLecture={currentLecture}
           upcoming={upcoming}
           now={now}
@@ -275,6 +278,7 @@ function App() {
         <Dashboard
           student={student}
           branchName={branch?.name ?? 'Branch unavailable'}
+          classTimetable={classTimetable}
           currentLecture={currentLecture}
           upcoming={upcoming}
           now={now}
@@ -316,6 +320,7 @@ function App() {
 function Dashboard({
   student,
   branchName,
+  classTimetable,
   currentLecture,
   upcoming,
   now,
@@ -328,6 +333,7 @@ function Dashboard({
 }: {
   student: NonNullable<ReturnType<typeof findStudent>>;
   branchName: string;
+  classTimetable?: TimetableDataset;
   currentLecture?: Lecture;
   upcoming?: { lecture: Lecture; dayOffset: number };
   now: Date;
@@ -431,7 +437,7 @@ function Dashboard({
         <Timetable
           selectedDay={getDayKey(now) ?? 'monday'}
           setSelectedDay={() => undefined}
-          lectures={timetable.lectures.filter((lecture) => lecture.day === (getDayKey(now) ?? 'monday'))}
+          lectures={classTimetable?.lectures.filter((lecture) => lecture.day === (getDayKey(now) ?? 'monday')) ?? []}
           now={now}
           currentLecture={currentLecture}
         />

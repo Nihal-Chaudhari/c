@@ -57,29 +57,88 @@ export const branches: Branch[] = [
   { id: 'mechanical-engineering', name: 'Mechanical Engineering', label: 'Mechanical' },
 ];
 
-// Source dataset: Computer Engineering, first semester. The source sheet groups
-// the visible enrollment series into CP1, CP2 and CP3; names were intentionally
-// omitted here because they are not needed to find a class.
-const sourceEnrollments = [
-  'CE01', 'CE03', 'CE04', 'CE05', 'CE06', 'CE07', 'CE09', 'CE10', 'CE17', 'CE19',
-  'CE21', 'CE24', 'CE78', 'CE79', 'CE82', 'CE86', 'CE87', 'CE88', 'CE91', 'CE92',
-  'CE93', 'CE94', 'CE95', 'CE96', 'CE26', 'CE28', 'CE29', 'CE30', 'CE31', 'CE32',
-  'CE33', 'CE34', 'CE37', 'CE38', 'CE39', 'CE40', 'CE41', 'CE42', 'CE43', 'CE45',
-  'CE46', 'CE47', 'CE49', 'CE97', 'CE98', 'CE99', 'CE100', 'CE101', 'CE102', 'CE103',
-  'CE52', 'CE53', 'CE55', 'CE56', 'CE57', 'CE58', 'CE59', 'CE61', 'CE62', 'CE63',
-  'CE65', 'CE66', 'CE68', 'CE70', 'CE72', 'CE73', 'CE74', 'CE76', 'CE77', 'CE104',
-  'CE105', 'CE107', 'CE108', 'CE109', 'CE110', 'CE111', 'CE112',
-] as const;
-
-const divisionForIndex = (index: number) => index < 24 ? 'CP1' : index < 45 ? 'CP2' : 'CP3';
-
-export const students: Student[] = sourceEnrollments.map((enrollmentNumber, index) => ({
-  enrollmentNumber,
-  institutionId: institution.id,
-  branchId: 'computer-engineering',
-  semester: 1,
-  division: divisionForIndex(index),
-}));
+// Source dataset: Computer Engineering, first semester. Each division is
+// recorded on the student itself. Never derive a division from array order:
+// the source sheet's ordering can change without changing a student's group.
+export const students: Student[] = [
+  { enrollmentNumber: 'CE01', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE03', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE04', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE05', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE06', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE07', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE09', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE10', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE17', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE19', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE21', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE24', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE78', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE79', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE82', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE86', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE87', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE88', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE91', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE92', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE93', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE94', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE95', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE96', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP1' },
+  { enrollmentNumber: 'CE26', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP2' },
+  { enrollmentNumber: 'CE28', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP2' },
+  { enrollmentNumber: 'CE29', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP2' },
+  { enrollmentNumber: 'CE30', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP2' },
+  { enrollmentNumber: 'CE31', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP2' },
+  { enrollmentNumber: 'CE32', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP2' },
+  { enrollmentNumber: 'CE33', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP2' },
+  { enrollmentNumber: 'CE34', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP2' },
+  { enrollmentNumber: 'CE37', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP2' },
+  { enrollmentNumber: 'CE38', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP2' },
+  { enrollmentNumber: 'CE39', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP2' },
+  { enrollmentNumber: 'CE40', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP2' },
+  { enrollmentNumber: 'CE41', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP2' },
+  { enrollmentNumber: 'CE42', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP2' },
+  { enrollmentNumber: 'CE43', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP2' },
+  { enrollmentNumber: 'CE45', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP2' },
+  { enrollmentNumber: 'CE46', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP2' },
+  { enrollmentNumber: 'CE47', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP2' },
+  { enrollmentNumber: 'CE49', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP2' },
+  { enrollmentNumber: 'CE97', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP2' },
+  { enrollmentNumber: 'CE98', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP2' },
+  { enrollmentNumber: 'CE99', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE100', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE101', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE102', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE103', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE52', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE53', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE55', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE56', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE57', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE58', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE59', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE61', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE62', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE63', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE65', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE66', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE68', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE70', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE72', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE73', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE74', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE76', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE77', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE104', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE105', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE107', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE108', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE109', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE110', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE111', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+  { enrollmentNumber: 'CE112', institutionId: institution.id, branchId: 'computer-engineering', semester: 1, division: 'CP3' },
+];
 
 export const timetable: TimetableDataset = {
   institutionId: institution.id,
@@ -113,6 +172,23 @@ export const timetable: TimetableDataset = {
     { id: 'fri-1300', day: 'friday', startTime: '13:00', endTime: '14:00', subject: 'Engineering Graphics', shortSubject: 'EG', type: 'Practical', groups: ['CP1', 'CP2', 'CP3'] },
   ],
 };
+
+export function timetableKey(branchId: string, semester: number, division: string) {
+  return `${branchId}:${semester}:${division}`;
+}
+
+// The current source schedule is shared by CP1, CP2 and CP3, but each class
+// still has an explicit catalog entry. This keeps timetable selection scoped to
+// the student's complete academic context as more datasets are added.
+export const timetableCatalog: Record<string, TimetableDataset> = {
+  [timetableKey(timetable.branchId, timetable.semester, 'CP1')]: { ...timetable, division: 'CP1' },
+  [timetableKey(timetable.branchId, timetable.semester, 'CP2')]: { ...timetable, division: 'CP2' },
+  [timetableKey(timetable.branchId, timetable.semester, 'CP3')]: { ...timetable, division: 'CP3' },
+};
+
+export function getTimetableForStudent(student: Student) {
+  return timetableCatalog[timetableKey(student.branchId, student.semester, student.division)];
+}
 
 export const dayLabels: Record<DayKey, string> = {
   monday: 'Monday',
@@ -151,24 +227,28 @@ export function getDayKey(date: Date): DayKey | null {
   return day >= 1 && day <= 5 ? weekdays[day - 1] : null;
 }
 
-export function findLiveLecture(date: Date, division: string) {
+export function findLiveLecture(date: Date, student: Student) {
   const day = getDayKey(date);
   if (!day) return undefined;
+  const studentTimetable = getTimetableForStudent(student);
+  if (!studentTimetable) return undefined;
   const now = date.getHours() * 60 + date.getMinutes();
-  return timetable.lectures.find((lecture) =>
+  return studentTimetable.lectures.find((lecture) =>
     lecture.day === day &&
-    lecture.groups.includes(division) &&
+    lecture.groups.includes(student.division) &&
     now >= minutesFromTime(lecture.startTime) &&
     now < minutesFromTime(lecture.endTime),
   );
 }
 
-export function findNextLecture(date: Date, division: string) {
+export function findNextLecture(date: Date, student: Student) {
   const day = getDayKey(date);
   const now = date.getHours() * 60 + date.getMinutes();
+  const studentTimetable = getTimetableForStudent(student);
+  if (!studentTimetable) return undefined;
   if (day) {
-    const todayNext = timetable.lectures
-      .filter((lecture) => lecture.day === day && lecture.groups.includes(division) && minutesFromTime(lecture.startTime) > now)
+    const todayNext = studentTimetable.lectures
+      .filter((lecture) => lecture.day === day && lecture.groups.includes(student.division) && minutesFromTime(lecture.startTime) > now)
       .sort((a, b) => minutesFromTime(a.startTime) - minutesFromTime(b.startTime))[0];
     if (todayNext) return { lecture: todayNext, dayOffset: 0 };
   }
@@ -178,8 +258,8 @@ export function findNextLecture(date: Date, division: string) {
     nextDate.setDate(date.getDate() + offset);
     const nextDay = getDayKey(nextDate);
     if (!nextDay) continue;
-    const nextLecture = timetable.lectures
-      .filter((lecture) => lecture.day === nextDay && lecture.groups.includes(division))
+    const nextLecture = studentTimetable.lectures
+      .filter((lecture) => lecture.day === nextDay && lecture.groups.includes(student.division))
       .sort((a, b) => minutesFromTime(a.startTime) - minutesFromTime(b.startTime))[0];
     if (nextLecture) return { lecture: nextLecture, dayOffset: offset };
   }
