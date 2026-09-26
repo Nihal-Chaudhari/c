@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Where’s My Class?"
+description = "A premium student class finder for Government Engineering College, Palanpur. Students enter an enrollment number to see their detected branch, semester, batch, live class status, next lecture, reminders, and weekly timetable."
+version = "1.0.0"
+id = "artifacts/wheres-my-class"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25708
+
+[services.development]
+run = "pnpm --filter @workspace/wheres-my-class run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/wheres-my-class", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/wheres-my-class/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25708"
+BASE_PATH = "/"

@@ -1,6 +1,6 @@
-# [Project name]
+# Where’s My Class?
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A premium class-finder app for GEC Palanpur students that turns an enrollment number into a live class status, next lecture, and weekly timetable.
 
 ## Run & Operate
 
@@ -10,6 +10,8 @@ _Replace the heading above with the project's name, and this line with one sente
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
 - Required env: `DATABASE_URL` — Postgres connection string
+- `pnpm --filter @workspace/wheres-my-class run typecheck` — typecheck the web app
+- `PORT=25708 BASE_PATH=/ pnpm --filter @workspace/wheres-my-class run build` — build the web app outside its managed workflow
 
 ## Stack
 
@@ -22,23 +24,36 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/wheres-my-class/src/App.tsx` — app shell, lookup flow, dashboard, timetable and reminders
+- `artifacts/wheres-my-class/src/data/classData.ts` — institution, branch, student and timetable source data plus time engine
+- `artifacts/wheres-my-class/src/index.css` — visual system, responsive layout and motion
+- `artifacts/wheres-my-class` — deployable React/Vite web artifact
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- The initial data is frontend-local and typed so the app works immediately without a backend; the entity hierarchy is separated from UI components for later API/database replacement.
+- Only source-visible Computer Engineering Semester 1 enrollment and timetable information is included; unavailable room/professor values are shown as “Not in source” rather than guessed.
+- Enrollment lookup auto-detects branch, semester and CP division; the user only chooses a day when browsing the weekly timetable.
+- Local storage remembers only the last enrollment number for convenience; browser reminder permission is requested only when the student asks to set a reminder.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Splash transition and premium landing/search experience
+- Enrollment lookup with friendly invalid and loading states
+- Automatic branch, semester and CP1/CP2/CP3 detection
+- Current/no-class status driven by local date and time
+- Next lecture details and reminder controls
+- Responsive weekly timetable with today and live highlighting
+- Remembered student shortcut and change-student flow
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+_No persistent user preferences recorded._
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- The Vite config intentionally requires `PORT` and `BASE_PATH`; the managed workflow supplies them automatically.
+- The source screenshots do not reliably provide professor or room values, so those fields remain explicitly unavailable until corrected with authoritative data.
 
 ## Pointers
 
