@@ -1,0 +1,16 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "4w5a21WQ1itORJd78n67S"
+uri = "file://exports/wheres-my-class-source.zip"
+type = "unspecified"
+title = "Where’s My Class? — Complete Source Code"
+description = "Complete sanitized project source ZIP with original folder structure, React/Vite frontend, shared API/database scaffolding, configuration, typed class data, attached reference files, and local setup instructions. Dependencies, build output, caches, Git metadata, and secret values are excluded."
+logical_id = "86972d7d-700b-450d-b3ea-779f91b06c1a"
+content_hash = "sha256:b17a968db4096898d435b4d4a63c132c940eb0626da8fd1930be0dfa157222d0"
+size = 451750
+mtime_ms = 1790442244879
+storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:94adc876-3590-4266-88f9-f155c81aef27/86972d7d-700b-450d-b3ea-779f91b06c1a/8ae80e7c-0dd8-437a-bbc6-70a3a197b93b"
+storage_version_token = "1790442256438299"
+content_type = "application/octet-stream"
