@@ -14,3 +14,17 @@ mtime_ms = 1790442244879
 storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:94adc876-3590-4266-88f9-f155c81aef27/86972d7d-700b-450d-b3ea-779f91b06c1a/8ae80e7c-0dd8-437a-bbc6-70a3a197b93b"
 storage_version_token = "1790442256438299"
 content_type = "application/octet-stream"
+
+[[outputs]]
+id = "lqWZs55NQ96ETozMAkx8v"
+uri = "file://exports/wheres-my-class-website.zip"
+type = "unspecified"
+title = "Where's My Class website source"
+description = "Complete website source archive with React code, timetable data, UI components, public assets, Vite and TypeScript configuration, workspace manifests, and the required API client source. Generated node_modules, dist, source maps, and build metadata are excluded."
+logical_id = "dd8fb2ec-f0ea-4ce3-8069-962c1aa310eb"
+content_hash = "sha256:c80a2a6b3beb1819045c52fe856620039a57ab5ff86fe95eaf603fd2e8250989"
+size = 151272
+mtime_ms = 1790583920981
+storage_uri = "gcs://replit-rams-assets-sisko/rams/assets/repl:94adc876-3590-4266-88f9-f155c81aef27/dd8fb2ec-f0ea-4ce3-8069-962c1aa310eb/4b4e0571-de0e-4a3a-ab9a-2df2566d47fc"
+storage_version_token = "1790583928547977"
+content_type = "application/octet-stream"
