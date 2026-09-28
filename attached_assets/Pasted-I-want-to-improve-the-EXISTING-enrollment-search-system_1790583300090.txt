@@ -1,0 +1,401 @@
+I want to improve the EXISTING enrollment search system by adding a smart semester-selection fallback.
+
+IMPORTANT:
+Do NOT rebuild the website.
+Do NOT redesign the existing premium UI.
+Do NOT remove or break the existing enrollment auto-detection.
+Do NOT make semester selection mandatory for students whose semester can already be detected.
+
+==================================================
+GOAL
+==================================================
+
+The website supports ALL branches and ALL semesters.
+
+The preferred experience is still:
+
+Enrollment Number
+↓
+Find Student
+↓
+Automatically detect Branch
+↓
+Automatically detect Semester
+↓
+Automatically detect Batch/Division
+↓
+Load correct timetable
+
+However, for students whose semester cannot be determined automatically, provide a manual semester-selection fallback.
+
+==================================================
+1. DEFAULT EXPERIENCE — AUTO DETECTION
+==================================================
+
+Keep the current simple search:
+
+FIND MY CLASS
+
+Enrollment Number
+[ Enter your enrollment number ]
+
+[ Find My Class → ]
+
+When the enrollment number exists in the student database and contains:
+
+- branch
+- semester
+- batch/division
+
+automatically detect all of them.
+
+Example:
+
+CE45
+↓
+Computer Engineering
+↓
+Semester 1
+↓
+CP2
+↓
+CP2 timetable
+
+Do NOT ask this student to select their semester manually.
+
+==================================================
+2. SEMESTER FALLBACK
+==================================================
+
+If the system cannot determine the student's semester from the enrollment/student data, show a polished fallback message:
+
+“Semester couldn't be detected.”
+
+Then provide:
+
+Select your semester
+
+[ Semester 1 ▼ ]
+
+Options:
+
+Semester 1
+Semester 2
+Semester 3
+Semester 4
+Semester 5
+Semester 6
+Semester 7
+Semester 8
+
+After the user selects the semester, continue with:
+
+Semester
++
+Enrollment Number
+↓
+Find student / determine batch
+↓
+Load appropriate timetable
+
+==================================================
+3. DO NOT SHOW SEMESTER SELECTION UNNECESSARILY
+==================================================
+
+This is very important.
+
+Do NOT put:
+
+Branch
+Semester
+Enrollment
+
+as three mandatory fields on the first screen.
+
+The main screen should remain simple:
+
+Enrollment Number
+[ Find My Class ]
+
+Only show semester selection when:
+
+1. The semester cannot be automatically determined, OR
+2. The user intentionally chooses a “Select semester manually” option.
+
+==================================================
+4. MANUAL SEMESTER OPTION
+==================================================
+
+Add a small secondary option near the enrollment field:
+
+“Can’t detect your semester?”
+
+or:
+
+“Select semester manually”
+
+This should be visually secondary to the main Find My Class button.
+
+When clicked, reveal the semester selector.
+
+Do not make this option visually dominant.
+
+==================================================
+5. IMPORTANT DATA LOGIC
+==================================================
+
+Do NOT guess a student's semester from the enrollment number unless the project's actual enrollment-number rules explicitly support that.
+
+Prefer:
+
+Enrollment Number
+→ Student database
+→ Stored semester
+
+If the student record contains a semester, use it.
+
+If it does not contain a semester or the student cannot be uniquely identified, use the manual semester fallback.
+
+==================================================
+6. BRANCH HANDLING
+==================================================
+
+Keep the existing automatic branch detection.
+
+If the student record contains:
+
+branchId
+
+use it automatically.
+
+Do NOT make branch selection mandatory.
+
+If branch cannot be determined and the current architecture genuinely requires it, provide a similar fallback later, but do NOT add unnecessary branch selection now.
+
+==================================================
+7. BATCH / CP1 / CP2 / CP3
+==================================================
+
+Keep the existing fixed student-to-batch mapping.
+
+The user should NOT manually select:
+
+CP1
+CP2
+CP3
+
+The batch must continue to come from the student's actual student record.
+
+Example:
+
+CE45
+→ Semester 1
+→ CP2
+
+Do not derive CP1/CP2/CP3 from array position.
+
+==================================================
+8. TIMETABLE LOOKUP
+==================================================
+
+Once the student context is known, use:
+
+Branch
++
+Semester
++
+Batch/Division
+
+to select the correct timetable.
+
+Then use:
+
+Day
++
+Current Time
+
+to determine:
+
+CURRENT LECTURE
+
+and:
+
+NEXT LECTURE
+
+The manual semester selection must feed into the same timetable logic as automatic detection.
+
+Do NOT create a separate timetable system for manual semester selection.
+
+==================================================
+9. EXAMPLE FLOWS
+==================================================
+
+FLOW A — AUTO DETECTION
+
+User enters:
+
+CE45
+
+System finds:
+
+Computer Engineering
+Semester 1
+CP2
+
+Then:
+
+→ Correct timetable
+→ Current lecture
+→ Next lecture
+
+No semester selector required.
+
+--------------------------------------------------
+
+FLOW B — SEMESTER NOT AVAILABLE
+
+User enters an enrollment number.
+
+System cannot determine semester.
+
+Show:
+
+“Semester couldn't be detected.”
+
+[ Select Semester ]
+
+User selects:
+
+Semester 3
+
+Then continue:
+
+Semester 3
++
+Enrollment Number
+↓
+Student lookup / batch detection
+↓
+Semester 3 timetable
+
+--------------------------------------------------
+
+FLOW C — USER CHOOSES MANUAL MODE
+
+User clicks:
+
+“Select semester manually”
+
+Show:
+
+[ Semester 1 ▼ ]
+
+User selects Semester 5.
+
+Then enter/search enrollment number using the selected semester context.
+
+==================================================
+10. PREMIUM UI
+==================================================
+
+Keep the existing premium design.
+
+The fallback must look like a natural part of the existing interface.
+
+Use:
+
+- clean dropdown
+- subtle animation
+- clear label
+- good spacing
+- professional icons
+- responsive mobile layout
+- responsive desktop layout
+
+Do NOT make it look like an error screen.
+
+The primary experience must remain:
+
+ONE INPUT → AUTO DETECTION
+
+The manual semester selection is only a fallback.
+
+==================================================
+11. ERROR HANDLING
+==================================================
+
+If the enrollment number does not exist:
+
+“Enrollment number not found.”
+
+If the enrollment exists but semester is missing:
+
+“Semester couldn't be detected. Please select your semester.”
+
+If the selected semester has no timetable data:
+
+“Timetable data for this semester is not available yet.”
+
+Do NOT invent timetable data.
+
+==================================================
+12. PRESERVE EVERYTHING ELSE
+==================================================
+
+Do NOT change or remove:
+
+- Splash screen
+- Landing page
+- Branding
+- Current Lecture
+- Next Lecture
+- Weekly Timetable
+- Notifications/reminders
+- Existing student lookup
+- Existing CP1/CP2/CP3 mapping
+- Responsive design
+- Existing premium UI
+
+Only modify the search/detection flow required for this hybrid auto-detection + manual-semester fallback.
+
+==================================================
+13. TEST
+==================================================
+
+After implementation, test:
+
+1. Student whose semester is known
+→ semester automatically detected
+
+2. Student whose semester is unknown
+→ manual semester selector appears
+
+3. User manually selects Semester 3
+→ correct semester context is used
+
+4. Valid enrollment
+→ correct student/batch/timetable
+
+5. Invalid enrollment
+→ correct error
+
+6. CP1 student
+→ CP1 remains automatic
+
+7. CP2 student
+→ CP2 remains automatic
+
+8. CP3 student
+→ CP3 remains automatic
+
+9. Current lecture
+→ correct
+
+10. Next lecture
+→ correct
+
+11. Weekly timetable
+→ correct
+
+IMPORTANT:
+Do not make semester selection mandatory for students whose semester can already be automatically detected.

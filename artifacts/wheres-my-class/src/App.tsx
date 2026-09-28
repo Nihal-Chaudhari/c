@@ -25,17 +25,21 @@ import {
   findLiveLecture,
   findNextLecture,
   findStudent,
+  findStudents,
   formatTime,
   getTimetableForStudent,
   getDayKey,
   minutesFromTime,
+  studentWithSemester,
   type DayKey,
   type Lecture,
+  type Student,
+  type StudentContext,
   type TimetableDataset,
 } from '@/data/classData';
 
 type Screen = 'home' | 'class' | 'timetable';
-type SearchState = 'idle' | 'loading' | 'found' | 'error';
+type SearchState = 'idle' | 'loading' | 'found' | 'error' | 'semester-needed';
 
 const LAST_STUDENT_KEY = 'wheres-my-class:last-student';
 
@@ -70,13 +74,31 @@ function lectureMatchesNow(lecture: Lecture, now: Date) {
   );
 }
 
+function candidateForSearch(candidates: Student[], selectedSemester: number | '') {
+  if (candidates.length === 1 && candidates[0].semester != null) {
+    return candidates[0];
+  }
+  if (selectedSemester === '') return undefined;
+
+  const exactMatches = candidates.filter((candidate) => candidate.semester === selectedSemester);
+  if (exactMatches.length === 1) return exactMatches[0];
+
+  const unknownMatches = candidates.filter((candidate) => candidate.semester == null);
+  return exactMatches.length === 0 && unknownMatches.length === 1 ? unknownMatches[0] : undefined;
+}
+
 function App() {
   const demoStudent = findStudent(new URLSearchParams(window.location.search).get('demo') ?? '');
-  const [screen, setScreen] = useState<Screen>(() => demoStudent ? 'class' : 'home');
+  const initialStudent = demoStudent?.semester != null
+    ? studentWithSemester(demoStudent, demoStudent.semester)
+    : undefined;
+  const [screen, setScreen] = useState<Screen>(() => initialStudent ? 'class' : 'home');
   const [splash, setSplash] = useState(() => new URLSearchParams(window.location.search).get('skip') !== '1');
   const [enrollment, setEnrollment] = useState('');
   const [searchState, setSearchState] = useState<SearchState>('idle');
-  const [student, setStudent] = useState<ReturnType<typeof findStudent>>(() => demoStudent);
+  const [student, setStudent] = useState<StudentContext | undefined>(() => initialStudent);
+  const [manualSemesterOpen, setManualSemesterOpen] = useState(false);
+  const [manualSemester, setManualSemester] = useState<number | ''>('');
   const [now, setNow] = useState(() => new Date());
   const [selectedDay, setSelectedDay] = useState<DayKey>(() => getDayKey(new Date()) ?? 'monday');
   const [toast, setToast] = useState('');
@@ -128,14 +150,23 @@ function App() {
     }
     setSearchState('loading');
     window.setTimeout(() => {
-      const found = findStudent(normalized);
-      if (!found) {
+      const candidates = findStudents(normalized);
+      if (!candidates.length) {
         setStudent(undefined);
         setSearchState('error');
         return;
       }
-      setStudent(found);
-      window.localStorage.setItem(LAST_STUDENT_KEY, found.enrollmentNumber);
+      const found = candidateForSearch(candidates, manualSemester);
+      const resolvedSemester = found?.semester ?? manualSemester;
+      if (!found || resolvedSemester === '') {
+        setStudent(undefined);
+        setManualSemesterOpen(true);
+        setSearchState('semester-needed');
+        return;
+      }
+      const resolvedStudent = studentWithSemester(found, resolvedSemester);
+      setStudent(resolvedStudent);
+      window.localStorage.setItem(LAST_STUDENT_KEY, resolvedStudent.enrollmentNumber);
       setSearchState('found');
       setScreen('class');
     }, 420);
@@ -150,6 +181,8 @@ function App() {
     setStudent(undefined);
     setSearchState('idle');
     setEnrollment('');
+    setManualSemesterOpen(false);
+    setManualSemester('');
     setReminderSet(false);
     setScreen('home');
   }
@@ -223,13 +256,45 @@ function App() {
                     value={enrollment}
                     onChange={(event) => {
                       setEnrollment(event.target.value.toUpperCase());
-                      if (searchState === 'error') setSearchState('idle');
+                      if (searchState === 'error' || searchState === 'semester-needed') setSearchState('idle');
                     }}
                     placeholder="e.g. CE45"
                     aria-invalid={searchState === 'error'}
                   />
                   {enrollment && <button type="button" className="input-clear" aria-label="Clear enrollment" onClick={() => setEnrollment('')}><X size={15} /></button>}
                 </div>
+                <button
+                  className="manual-semester-toggle"
+                  type="button"
+                  onClick={() => setManualSemesterOpen((isOpen) => !isOpen)}
+                >
+                  {manualSemesterOpen ? 'Hide semester selector' : 'Can’t detect your semester?'}
+                </button>
+                {manualSemesterOpen && (
+                  <div className="semester-fallback">
+                    {searchState === 'semester-needed' && (
+                      <div className="semester-fallback-message" role="alert">
+                        <CircleAlert size={15} />
+                        <span><strong>Semester couldn't be detected.</strong><br />Please select your semester to continue.</span>
+                      </div>
+                    )}
+                    <label className="search-card-label" htmlFor="semester">Select your semester</label>
+                    <select
+                      id="semester"
+                      className="semester-select"
+                      value={manualSemester}
+                      onChange={(event) => {
+                        setManualSemester(event.target.value ? Number(event.target.value) : '');
+                        if (searchState === 'semester-needed') setSearchState('idle');
+                      }}
+                    >
+                      <option value="">Choose a semester</option>
+                      {Array.from({ length: 8 }, (_, index) => index + 1).map((semester) => (
+                        <option key={semester} value={semester}>Semester {semester}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
                 <button className="primary-button" type="submit" disabled={searchState === 'loading'}>
                   {searchState === 'loading' ? 'Finding your class…' : <>Find my class <ArrowRight size={16} /></>}
                 </button>
@@ -301,6 +366,7 @@ function App() {
             </div>
             <button className="ghost-button" onClick={() => setScreen('class')}><ArrowRight size={14} /> Back to overview</button>
           </div>
+          {!classTimetable && <TimetableUnavailableNotice />}
           <Timetable
             selectedDay={selectedDay}
             setSelectedDay={setSelectedDay}
@@ -313,6 +379,15 @@ function App() {
 
       {student && <BottomNav screen={screen} setScreen={setScreen} />}
       {toast && <div className="toast-note" role="status"><Check size={15} color="hsl(38 93% 45%)" /> {toast}</div>}
+    </div>
+  );
+}
+
+function TimetableUnavailableNotice() {
+  return (
+    <div className="availability-note" role="status">
+      <CircleAlert size={16} />
+      <span><strong>Timetable data for this semester is not available yet.</strong><br />Your student details were found, but no timetable has been published for this semester.</span>
     </div>
   );
 }
@@ -331,7 +406,7 @@ function Dashboard({
   reminderSet,
   onReminder,
 }: {
-  student: NonNullable<ReturnType<typeof findStudent>>;
+  student: StudentContext;
   branchName: string;
   classTimetable?: TimetableDataset;
   currentLecture?: Lecture;
@@ -366,6 +441,7 @@ function Dashboard({
           <button className="icon-button" onClick={onChangeStudent} aria-label="Change student"><RotateCcw size={14} /></button>
         </div>
       </div>
+      {!classTimetable && <TimetableUnavailableNotice />}
 
       <div className="overview-grid">
         <section className={`live-card ${currentLecture ? '' : 'no-class-card'}`}>

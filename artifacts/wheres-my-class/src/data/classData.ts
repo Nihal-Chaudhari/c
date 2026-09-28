@@ -17,8 +17,12 @@ export type Student = {
   enrollmentNumber: string;
   institutionId: string;
   branchId: string;
-  semester: number;
+  semester?: number;
   division: string;
+};
+
+export type StudentContext = Student & {
+  semester: number;
 };
 
 export type Institution = {
@@ -187,6 +191,7 @@ export const timetableCatalog: Record<string, TimetableDataset> = {
 };
 
 export function getTimetableForStudent(student: Student) {
+  if (student.semester == null) return undefined;
   return timetableCatalog[timetableKey(student.branchId, student.semester, student.division)];
 }
 
@@ -208,9 +213,18 @@ export const dayShortLabels: Record<DayKey, string> = {
 
 export const weekdays: DayKey[] = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
 
-export function findStudent(value: string) {
+export function findStudents(value: string) {
   const normalized = value.trim().toUpperCase();
-  return students.find((student) => student.enrollmentNumber === normalized);
+  return students.filter((student) => student.enrollmentNumber === normalized);
+}
+
+export function findStudent(value: string) {
+  const matches = findStudents(value);
+  return matches.length === 1 ? matches[0] : undefined;
+}
+
+export function studentWithSemester(student: Student, semester: number): StudentContext {
+  return { ...student, semester };
 }
 
 export function branchForStudent(student: Student) {
