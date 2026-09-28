@@ -1,0 +1,256 @@
+Update the existing Find My Class search system with this exact behavior.
+
+IMPORTANT:
+Do NOT redesign the website.
+Do NOT remove the existing premium UI.
+Do NOT remove automatic branch detection.
+Do NOT remove automatic CP1/CP2/CP3 batch detection.
+
+I want ONLY one major UX change:
+
+ADD A MANUAL SEMESTER SELECT OPTION.
+
+==================================================
+NEW SEARCH FLOW
+==================================================
+
+The user should see:
+
+FIND YOUR CLASS
+
+Semester
+[ Select Semester ▼ ]
+
+Enrollment Number
+[ Enter your enrollment number ]
+
+[ Find My Class → ]
+
+Semester options:
+
+Semester 1
+Semester 2
+Semester 3
+Semester 4
+Semester 5
+Semester 6
+Semester 7
+Semester 8
+
+==================================================
+IMPORTANT AUTO-DETECTION RULE
+==================================================
+
+The user manually selects ONLY the semester.
+
+The website must continue automatically detecting:
+
+Enrollment Number
+↓
+Student
+↓
+Branch
+↓
+Batch / Division
+↓
+Correct timetable
+
+The user must NOT manually select:
+
+❌ Branch
+❌ CP1
+❌ CP2
+❌ CP3
+❌ Division
+
+For example:
+
+User selects:
+Semester 1
+
+User enters:
+CE45
+
+The system automatically determines:
+
+CE45
+→ Computer Engineering
+→ Semester 1
+→ CP2
+→ CP2 timetable
+
+The branch must still come from the student's data.
+
+The CP1/CP2/CP3 group must still come from the student's actual student record.
+
+==================================================
+WHY SEMESTER IS MANUAL
+==================================================
+
+The website supports ALL semesters.
+
+The enrollment number may not always contain enough reliable information to determine the semester.
+
+Therefore:
+
+Semester = USER SELECTS
+
+Branch = AUTO-DETECTED
+
+Batch/Division = AUTO-DETECTED
+
+==================================================
+VALIDATION
+==================================================
+
+When the user selects a semester and enters an enrollment number:
+
+1. Search the student.
+2. Automatically determine the student's branch.
+3. Use the selected semester as the semester context.
+4. Automatically determine the student's batch/division.
+5. Load the timetable for:
+
+Branch + Selected Semester + Batch/Division
+
+Do NOT guess the branch.
+
+Do NOT ask the user to select the branch.
+
+==================================================
+EXAMPLE
+==================================================
+
+User selects:
+
+Semester 3
+
+Enters:
+
+CE145
+
+System should determine:
+
+Branch → Computer Engineering
+Semester → 3 (selected by user)
+Batch → automatically detected from student data
+
+Then load:
+
+Computer Engineering
+Semester 3
+Correct Batch timetable
+
+==================================================
+IMPORTANT EXISTING LOGIC
+==================================================
+
+Keep the existing enrollment → student lookup.
+
+Keep the existing explicit student-to-CP1/CP2/CP3 mapping.
+
+Do NOT determine CP1/CP2/CP3 using array position.
+
+Do NOT add a CP1/CP2/CP3 selector.
+
+==================================================
+PREMIUM UI
+==================================================
+
+Make the semester selector look like a natural part of the existing premium UI.
+
+Use:
+
+- clean dropdown
+- proper label
+- professional icon
+- consistent spacing
+- subtle hover/focus states
+- responsive mobile design
+- responsive desktop design
+
+Do not make the form look like a basic college HTML form.
+
+Keep the enrollment input as the main focus.
+
+Suggested layout:
+
+FIND YOUR CLASS
+
+Semester
+[ Semester 1 ▼ ]
+
+Enrollment Number
+[ Enter your enrollment number ]
+
+[ Find My Class → ]
+
+==================================================
+AFTER SEARCH
+==================================================
+
+After successful lookup, show:
+
+Student Found
+
+Enrollment: CE45
+Branch: Computer Engineering
+Semester: 1
+Batch: CP2
+
+Then show the existing:
+
+CURRENT LECTURE
+NEXT LECTURE
+WEEKLY TIMETABLE
+
+Do not ask for the branch or batch again.
+
+==================================================
+ERROR HANDLING
+==================================================
+
+If enrollment number is invalid:
+
+“Enrollment number not found.”
+
+If the selected semester has no timetable data:
+
+“Timetable data for this semester is not available yet.”
+
+Do NOT create fake timetable data.
+
+==================================================
+DO NOT CHANGE
+==================================================
+
+Keep all existing:
+
+- Splash screen
+- Landing page
+- Branding
+- Current Lecture
+- Next Lecture
+- Weekly Timetable
+- Notifications/reminders
+- CP1/CP2/CP3 mapping
+- Auto branch detection
+- Premium UI
+- Responsive design
+
+Only add the manual semester selection and connect it correctly to the existing student/timetable logic.
+
+Finally test:
+
+Semester 1 + valid enrollment
+Semester 2 + valid enrollment
+Semester 3 + valid enrollment
+Invalid enrollment
+CP1
+CP2
+CP3
+Current lecture
+Next lecture
+Weekly timetable
+Mobile layout
+Desktop layout

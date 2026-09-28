@@ -25,7 +25,6 @@ import {
   findLiveLecture,
   findNextLecture,
   findStudent,
-  findStudents,
   formatTime,
   getTimetableForStudent,
   getDayKey,
@@ -39,7 +38,7 @@ import {
 } from '@/data/classData';
 
 type Screen = 'home' | 'class' | 'timetable';
-type SearchState = 'idle' | 'loading' | 'found' | 'error' | 'semester-needed';
+type SearchState = 'idle' | 'loading' | 'found' | 'error' | 'semester-required';
 
 const LAST_STUDENT_KEY = 'wheres-my-class:last-student';
 
@@ -74,19 +73,6 @@ function lectureMatchesNow(lecture: Lecture, now: Date) {
   );
 }
 
-function candidateForSearch(candidates: Student[], selectedSemester: number | '') {
-  if (candidates.length === 1 && candidates[0].semester != null) {
-    return candidates[0];
-  }
-  if (selectedSemester === '') return undefined;
-
-  const exactMatches = candidates.filter((candidate) => candidate.semester === selectedSemester);
-  if (exactMatches.length === 1) return exactMatches[0];
-
-  const unknownMatches = candidates.filter((candidate) => candidate.semester == null);
-  return exactMatches.length === 0 && unknownMatches.length === 1 ? unknownMatches[0] : undefined;
-}
-
 function App() {
   const demoStudent = findStudent(new URLSearchParams(window.location.search).get('demo') ?? '');
   const initialStudent = demoStudent?.semester != null
@@ -97,7 +83,6 @@ function App() {
   const [enrollment, setEnrollment] = useState('');
   const [searchState, setSearchState] = useState<SearchState>('idle');
   const [student, setStudent] = useState<StudentContext | undefined>(() => initialStudent);
-  const [manualSemesterOpen, setManualSemesterOpen] = useState(false);
   const [manualSemester, setManualSemester] = useState<number | ''>('');
   const [now, setNow] = useState(() => new Date());
   const [selectedDay, setSelectedDay] = useState<DayKey>(() => getDayKey(new Date()) ?? 'monday');
@@ -150,21 +135,18 @@ function App() {
     }
     setSearchState('loading');
     window.setTimeout(() => {
-      const candidates = findStudents(normalized);
-      if (!candidates.length) {
+      const found = findStudent(normalized);
+      if (!found) {
         setStudent(undefined);
         setSearchState('error');
         return;
       }
-      const found = candidateForSearch(candidates, manualSemester);
-      const resolvedSemester = found?.semester ?? manualSemester;
-      if (!found || resolvedSemester === '') {
+      if (manualSemester === '') {
         setStudent(undefined);
-        setManualSemesterOpen(true);
-        setSearchState('semester-needed');
+        setSearchState('semester-required');
         return;
       }
-      const resolvedStudent = studentWithSemester(found, resolvedSemester);
+      const resolvedStudent = studentWithSemester(found, manualSemester);
       setStudent(resolvedStudent);
       window.localStorage.setItem(LAST_STUDENT_KEY, resolvedStudent.enrollmentNumber);
       setSearchState('found');
@@ -181,7 +163,6 @@ function App() {
     setStudent(undefined);
     setSearchState('idle');
     setEnrollment('');
-    setManualSemesterOpen(false);
     setManualSemester('');
     setReminderSet(false);
     setScreen('home');
@@ -246,6 +227,27 @@ function App() {
                 Enter your enrollment number to see what’s happening now, where to go next, and your whole week at a glance.
               </p>
               <form className="search-card" onSubmit={submitSearch}>
+                <div className="semester-field">
+                  <label className="search-card-label" htmlFor="semester">Semester</label>
+                  <div className="select-wrap">
+                    <GraduationCap size={17} aria-hidden="true" />
+                    <select
+                      id="semester"
+                      className="semester-select"
+                      value={manualSemester}
+                      onChange={(event) => {
+                        setManualSemester(event.target.value ? Number(event.target.value) : '');
+                        if (searchState === 'semester-required') setSearchState('idle');
+                      }}
+                      aria-invalid={searchState === 'semester-required'}
+                    >
+                      <option value="">Select Semester</option>
+                      {Array.from({ length: 8 }, (_, index) => index + 1).map((semester) => (
+                        <option key={semester} value={semester}>Semester {semester}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
                 <label className="search-card-label" htmlFor="enrollment">Enrollment number</label>
                 <div className="input-wrap">
                   <Search size={17} aria-hidden="true" />
@@ -256,50 +258,21 @@ function App() {
                     value={enrollment}
                     onChange={(event) => {
                       setEnrollment(event.target.value.toUpperCase());
-                      if (searchState === 'error' || searchState === 'semester-needed') setSearchState('idle');
+                      if (searchState === 'error' || searchState === 'semester-required') setSearchState('idle');
                     }}
                     placeholder="e.g. CE45"
                     aria-invalid={searchState === 'error'}
                   />
                   {enrollment && <button type="button" className="input-clear" aria-label="Clear enrollment" onClick={() => setEnrollment('')}><X size={15} /></button>}
                 </div>
-                <button
-                  className="manual-semester-toggle"
-                  type="button"
-                  onClick={() => setManualSemesterOpen((isOpen) => !isOpen)}
-                >
-                  {manualSemesterOpen ? 'Hide semester selector' : 'Can’t detect your semester?'}
-                </button>
-                {manualSemesterOpen && (
-                  <div className="semester-fallback">
-                    {searchState === 'semester-needed' && (
-                      <div className="semester-fallback-message" role="alert">
-                        <CircleAlert size={15} />
-                        <span><strong>Semester couldn't be detected.</strong><br />Please select your semester to continue.</span>
-                      </div>
-                    )}
-                    <label className="search-card-label" htmlFor="semester">Select your semester</label>
-                    <select
-                      id="semester"
-                      className="semester-select"
-                      value={manualSemester}
-                      onChange={(event) => {
-                        setManualSemester(event.target.value ? Number(event.target.value) : '');
-                        if (searchState === 'semester-needed') setSearchState('idle');
-                      }}
-                    >
-                      <option value="">Choose a semester</option>
-                      {Array.from({ length: 8 }, (_, index) => index + 1).map((semester) => (
-                        <option key={semester} value={semester}>Semester {semester}</option>
-                      ))}
-                    </select>
-                  </div>
-                )}
                 <button className="primary-button" type="submit" disabled={searchState === 'loading'}>
                   {searchState === 'loading' ? 'Finding your class…' : <>Find my class <ArrowRight size={16} /></>}
                 </button>
                 {searchState === 'error' && (
                   <div className="error-note" role="alert"><CircleAlert size={15} /> <span>Enrollment number not found.<br />Please check the number and try again.</span></div>
+                )}
+                {searchState === 'semester-required' && (
+                  <div className="error-note" role="alert"><CircleAlert size={15} /> <span>Please select your semester to continue.</span></div>
                 )}
                 {rememberedEnrollment && (
                   <div className="remember-card">
@@ -431,7 +404,7 @@ function Dashboard({
     <main className="dashboard">
       <div className="dashboard-heading">
         <div>
-          <div className="eyebrow"><span className="eyebrow-dot" /> Class overview</div>
+          <div className="eyebrow"><span className="eyebrow-dot" /> Student found · Class overview</div>
           <h1 className="dashboard-title">Good morning.</h1>
           <p className="dashboard-subtitle">Here’s what your day looks like, {student.enrollmentNumber}.</p>
         </div>

@@ -133,14 +133,11 @@ button:focus-visible, input:focus-visible, a:focus-visible {
 .primary-button:hover { transform: translateY(-2px); box-shadow: 0 8px 18px hsl(var(--primary) / .2); background: hsl(222 48% 25%); }
 .primary-button:active { transform: translateY(0); }
 .error-note { display: flex; gap: 8px; align-items: flex-start; margin: 12px 2px 0; color: hsl(var(--destructive)); font-size: 12px; line-height: 1.5; }
-.manual-semester-toggle { margin: 12px 2px 0; padding: 0; border: 0; background: transparent; color: hsl(var(--muted-foreground)); font: 500 11px var(--app-font-mono); text-decoration: underline; text-underline-offset: 3px; }
-.manual-semester-toggle:hover { color: hsl(var(--primary)); }
-.semester-fallback { display: grid; gap: 10px; margin-top: 14px; padding: 14px; border: 1px solid hsl(var(--accent) / .28); border-radius: 11px; background: hsl(var(--accent) / .06); animation: toast-in .25s ease both; }
-.semester-fallback .search-card-label { margin: 0; }
-.semester-fallback-message { display: flex; gap: 8px; align-items: flex-start; color: hsl(var(--primary)); font-size: 12px; line-height: 1.5; }
-.semester-fallback-message svg { flex: 0 0 auto; color: hsl(var(--accent)); }
-.semester-select { width: 100%; min-height: 45px; padding: 0 12px; border: 1px solid hsl(var(--border)); border-radius: 10px; background: hsl(var(--card)); color: hsl(var(--foreground)); font-size: 13px; font-weight: 650; }
-.semester-select:focus { outline: 0; border-color: hsl(var(--accent)); box-shadow: 0 0 0 4px hsl(var(--accent) / .16); }
+.semester-field { display: grid; gap: 11px; margin-bottom: 16px; }
+.select-wrap { display: flex; align-items: center; gap: 10px; padding: 0 14px; border: 1px solid hsl(var(--border)); border-radius: 11px; transition: border-color .2s, box-shadow .2s; }
+.select-wrap:focus-within { border-color: hsl(var(--accent)); box-shadow: 0 0 0 4px hsl(var(--accent) / .16); }
+.select-wrap svg { color: hsl(var(--muted-foreground)); flex: 0 0 auto; }
+.semester-select { min-width: 0; width: 100%; min-height: 50px; padding: 0; border: 0; outline: 0; background: transparent; color: hsl(var(--foreground)); font-size: 14px; font-weight: 700; }
 .remember-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 13px; padding: 12px 13px; border: 1px solid hsl(var(--accent) / .38); border-radius: 11px; background: hsl(var(--accent) / .10); font-size: 12px; }
 .remember-card button { color: hsl(var(--primary)); border: 0; background: transparent; font-size: 12px; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
 .remember-label { display: block; color: hsl(var(--muted-foreground)); font-size: 10px; margin-bottom: 3px; }
